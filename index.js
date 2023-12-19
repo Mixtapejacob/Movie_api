@@ -21,9 +21,7 @@ let topBooks = [
     res.send('Welcome to my book club!');
   });
   
-  app.get('/documentation', (req, res) => {                  
-    res.sendFile('public/documentation.html', { root: __dirname });
-  });
+  app.use(express.static('public'));
   
   app.get('/books', (req, res) => {
     res.json(topBooks);
