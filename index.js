@@ -41,7 +41,7 @@ app.get('/documentation', (req, res) => {
 });
 
 app.get('/', (req, res) => {
-  res.send('Welcome to myFlix!');
+  res.send('Welcome to my Movie!');
 });
 
 // get all movies
