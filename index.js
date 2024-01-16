@@ -1,87 +1,55 @@
-const express = require('express');
+const express = require("express"),
+  bodyParser = require("body-parser"),
+  uuid = require("uuid"),
+  methodOverride = require("method-override");
+
 const app = express();
-const uuid = require('uuid');
-const bodyParser = require('body-parser'),
-  methodOverride = require('method-override');
-  app.use(cors());
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
-app.use(methodOverride());
-let auth = require('./auth')(app);
-const passport = require('passport');
-require('./passport');
 
-app.use(bodyParser.urlencoded({
-  extended: true
-}));
+app.use(bodyParser.json());
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+  })
+);
 
 app.use(bodyParser.json());
 app.use(methodOverride());
 
-app.use(express.static('public'));
+app.use(express.static("public"));
 
 let topBooks = [
-    {
-      title: 'Harry Potter and the Sorcerer\'s Stone',
-      author: 'J.K. Rowling'
-    },
-    {
-      title: 'Lord of the Rings',
-      author: 'J.R.R. Tolkien'
-    },
-    {
-      title: 'Twilight',
-      author: 'Stephanie Meyer'
-    }
-  ];
-  
-  // serves the docuemntation html page
-app.get('/documentation', (req, res) => {
-  res.sendFile('public/documentation.html', { root: __dirname });
+  {
+    title: "Harry Potter and the Sorcerer's Stone",
+    author: "J.K. Rowling",
+  },
+  {
+    title: "Lord of the Rings",
+    author: "J.R.R. Tolkien",
+  },
+  {
+    title: "Twilight",
+    author: "Stephanie Meyer",
+  },
+];
+
+// serves the docuemntation html page
+app.get("/documentation", (req, res) => {
+  res.sendFile("public/documentation.html", { root: __dirname });
 });
 
-app.get('/', (req, res) => {
-  res.send('Welcome to my Movie!');
+app.get("/", (req, res) => {
+  res.send("Welcome to my movie club");
 });
 
 // get all movies
-app.get(
-  '/movies',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res) => {
-    await Movies.find()
-      .then((movies) => {
-        res.status(201).json(movies);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      });
-  }
-);
-
-// get movie by title
-app.get(
-  '/movies/:Title',
-  passport.authenticate('jwt', { session: false }),
-  async (req, res) => {
-    await Movies.findOne({ Title: req.params.Title })
-      .then((movie) => {
-        res.json(movie);
-      })
-      .catch((err) => {
-        console.error(err);
-        res.status(500).send('Error: ' + err);
-      });
-  }
-);
-
-
+app.get("/movies", (req, res) => {
+  res.send("Successful GET request returning data on all the movies");
+});
 
 // get movie(s) by genre
 app.get(
-  '/movies/genres/:genreName',
-  passport.authenticate('jwt', { session: false }),
+  "/movies/genres/:genreName",
+  // passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Movies.find({ Genre: req.params.genreName })
       .then((movies) => {
@@ -89,30 +57,30 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
 // Get movie(s) by director
 app.get(
-  '/movies/directors/:director',
-  passport.authenticate('jwt', { session: false }),
+  "/movies/directors/:director",
+  // passport.authenticate('jwt', { session: false }),
   (req, res) => {
     Movies.find({ Director: req.params.director })
       .then((movies) => {
         res.status(200).json(movies);
       })
       .catch((err) => {
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
 // Get all users
 app.get(
-  '/users',
-  passport.authenticate('jwt', { session: false }),
+  "/users",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Users.find()
       .then((users) => {
@@ -120,15 +88,15 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
 //Get User by Username
 app.get(
-  '/users/username/:username',
-  passport.authenticate('jwt', { session: false }),
+  "/users/username/:username",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Users.findOne({ Username: req.params.username })
       .then((user) => {
@@ -136,15 +104,15 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
 //Get user by id
 app.get(
-  '/users/id/:id',
-  passport.authenticate('jwt', { session: false }),
+  "/users/id/:id",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Users.findOne({ _id: req.params.id })
       .then((user) => {
@@ -152,22 +120,21 @@ app.get(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
-
 app.post(
-  '/users',
+  "/users",
   [
-    check('Username', 'Username is required').isLength({ min: 1 }),
-    check(
-      'Username',
-      'Username contains non alphanumeric characters - not allowed.'
-    ).isAlphanumeric(),
-    check('Password', 'Password is required').not().isEmpty(),
-    check('Email', 'Email does not appear to be valid').isEmail(),
+    // check('Username', 'Username is required').isLength({ min: 1 }),
+    // check(
+    //   'Username',
+    //   'Username contains non alphanumeric characters - not allowed.'
+    // ).isAlphanumeric(),
+    // check('Password', 'Password is required').not().isEmpty(),
+    // check('Email', 'Email does not appear to be valid').isEmail(),
   ],
   async (req, res) => {
     let errors = validationResult(req);
@@ -178,7 +145,7 @@ app.post(
     await Users.findOne({ Username: req.body.Username })
       .then((user) => {
         if (user) {
-          return res.status(400).send(req.body.Username + ' already exists');
+          return res.status(400).send(req.body.Username + " already exists");
         } else {
           Users.create({
             Username: req.body.Username,
@@ -191,24 +158,23 @@ app.post(
             })
             .catch((error) => {
               console.error(error);
-              res.status(500).send('Error: ' + error);
+              res.status(500).send("Error: " + error);
             });
         }
       })
       .catch((error) => {
         console.error(error);
-        res.status(500).send('Error: ' + error);
+        res.status(500).send("Error: " + error);
       });
   }
 );
 
-
 app.put(
-  '/users/:Username',
-  passport.authenticate('jwt', { session: false }),
+  "/users/:Username",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     if (req.user.Username !== req.params.Username) {
-      return res.status(400).send('Permission denied');
+      return res.status(400).send("Permission denied");
     }
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -227,42 +193,42 @@ app.put(
       })
       .catch((err) => {
         console.log(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
 
 //DELETE user by username
 app.delete(
-  '/users/:Username',
-  passport.authenticate('jwt', { session: false }),
+  "/users/:Username",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     if (req.user.Username !== req.params.Username) {
-      return res.status(400).send('Unable to delete user');
+      return res.status(400).send("Unable to delete user");
     }
     await Users.findOneAndDelete({ Username: req.params.Username })
       .then((user) => {
         if (!user) {
           res
             .status(400)
-            .send('User ' + req.params.Username + ' was not found.');
+            .send("User " + req.params.Username + " was not found.");
         } else {
           res
             .status(200)
-            .send('User ' + req.params.Username + ' was successfully deleted.');
+            .send("User " + req.params.Username + " was successfully deleted.");
         }
       })
       .catch((err) => {
         console.error(err);
-        res.status.apply(500).send('Error: ' + err);
+        res.status.apply(500).send("Error: " + err);
       });
   }
 );
 
 // Add movie to user's favorites array
 app.post(
-  '/users/:Username/movies/:MovieID',
-  passport.authenticate('jwt', { session: false }),
+  "/users/:Username/movies/:MovieID",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -276,7 +242,7 @@ app.post(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
@@ -284,8 +250,8 @@ app.post(
 // Remove movie from user's favorites array
 
 app.delete(
-  '/users/:Username/movies/:MovieID',
-  passport.authenticate('jwt', { session: false }),
+  "/users/:Username/movies/:MovieID",
+  // passport.authenticate('jwt', { session: false }),
   async (req, res) => {
     await Users.findOneAndUpdate(
       { Username: req.params.Username },
@@ -299,15 +265,15 @@ app.delete(
       })
       .catch((err) => {
         console.error(err);
-        res.status(500).send('Error: ' + err);
+        res.status(500).send("Error: " + err);
       });
   }
 );
-require("./auth")(router);
-app.use("/", router);
+// require("./auth")(router);
+// app.use("/");
 
 // In case of server issue
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).send('Server Error');
+  res.status(500).send("Server Error");
 });
