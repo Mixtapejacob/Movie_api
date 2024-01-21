@@ -38,12 +38,12 @@ app.get("/documentation", (req, res) => {
 });
 
 app.get("/", (req, res) => {
-  res.send("Welcome to my movie club");
+  res.send("Return a list of ALL movies to the user");
 });
 
 // get all movies
-app.get("/movies", (req, res) => {
-  res.send("Successful GET request returning data on all the movies");
+app.get("/movies/:movieTitle", (req, res) => {
+  res.send("Successful GET Return data (description, genre, director, image URL, whether it’s featured or not) about a single movie by title to the user;");
 });
 
 // get movie(s) by genre
@@ -76,31 +76,8 @@ app.get(
 
 
 //Get user by id
-app.post(
-  "/users/id/:id",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("Successful POST request Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later); ;");
-  });
-
-app.post(
-  "/users",
-  // [
-    // check('Username', 'Username is required').isLength({ min: 1 }),
-    // check(
-    //   'Username',
-    //   'Username contains non alphanumeric characters - not allowed.'
-    // ).isAlphanumeric(),
-    // check('Password', 'Password is required').not().isEmpty(),
-    // check('Email', 'Email does not appear to be valid').isEmail(),
-  // ],
-  (req, res) => 
-  {
-  });
-
 app.put(
-  "/users/:Username",
+  "/users/movies",
   // passport.authenticate('jwt', { session: false }),
   (req, res) => 
   {
@@ -109,8 +86,27 @@ app.put(
 
 
 
+app.put(
+  "/Username",
+  // passport.authenticate('jwt', { session: false }),
+  (req, res) => 
+  {
+    res.send("  Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later);;");
+  });
+
+  app.put(
+    "/users/:Username/movies/:MovieID",
+    // passport.authenticate('jwt', { session: false }),
+    (req, res) => 
+    {
+      res.send("Successfully adding a favorite movie");
+    });
+  // Remove movie from user's favorites array
+
+
+
 app.delete(
-  "/users/:Username/movies/:MovieID",
+  "/users/name",
   // passport.authenticate('jwt', { session: false }),
   (req, res) => 
   {
