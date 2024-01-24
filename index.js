@@ -37,91 +37,106 @@ app.get("/documentation", (req, res) => {
   res.sendFile("public/documentation.html", { root: __dirname });
 });
 
+// Confirm API is Active
 app.get("/", (req, res) => {
-  res.send("Return a list of ALL movies to the user");
+  res.send("Welcome to the Movie application");
 });
 
 // get all movies
-app.get("/movies/:movieTitle", (req, res) => {
-  res.send("Successful GET Return data (description, genre, director, image URL, whether it’s featured or not) about a single movie by title to the user;");
+app.get("/movies/", (req, res) => {
+  res.send(
+    "Successful GET Return data (description, genre, director etc... for all movies"
+  );
 });
 
-// get movie(s) by genre
+// get one movie by Title
+app.get("/movies/:Title", (req, res) => {
+  res.send("Successful GET Return one Movie per Title");
+});
+
+//  Post new user to register
+app.post("/users/", (req, res) => {
+  res.send("Successful Post Allow new user to register");
+});
+
+// get Genre description
 app.get(
   "/movies/genres/:genreName",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("Successful GET request Return data about a genre (description) by name/title (e.g., “Thriller”);");
-  });
+  (req, res) => {
+    res.send(
+      "Successful GET request Return data about a genre (description) by name/title (e.g., “Thriller”);"
+    );
+  }
+);
 
-// Get movie(s) by director
+// Get details about the director
 app.get(
   "/movies/directors/:director",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-    {
-      res.send("Successful GET request Return data about a director (bio, birth year, death year) by name;;");
-    });
-   
+  (req, res) => {
+    res.send(
+      "Successful GET request Return data about a director (bio, birth year, death year) by name;;"
+    );
+  }
+);
 
 // Get all users
 app.get(
-  "/users",
+  "/users/",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("Successful GET request Allow new users to register;");
-  });
+  (req, res) => {
+    res.send("Successful GET request to list all users;");
+  }
+);
 
-
-//Get user by id
+//Update user information
 app.put(
-  "/users/movies",
+  "/users/:username",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("Successful PUT request Allow users to update their user info (username); ;");
-  });
+  (req, res) => {
+    res.send(
+      "Successful PUT request Allow users to update their user info (username,password etc..); ;"
+    );
+  }
+);
 
-
-
+// Allow users to add a movie their List of Favorites
 app.put(
-  "/Username",
+  "/users/:Username/movies/:MovieID",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("  Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later);;");
-  });
+  (req, res) => {
+    res.send(
+      "  Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later);;"
+    );
+  }
+);
 
-  app.put(
-    "/users/:Username/movies/:MovieID",
-    // passport.authenticate('jwt', { session: false }),
-    (req, res) => 
-    {
-      res.send("Successfully adding a favorite movie");
-    });
-  // Remove movie from user's favorites array
-
-
-
+// Allow users to remove a movie their List of Favorites
 app.delete(
-  "/users/name",
+  "/users/:Username/movies/:MovieID",
   // passport.authenticate('jwt', { session: false }),
-  (req, res) => 
-  {
-    res.send("Successful delete request Allow existing users to deregister (showing only a text that a user email has been removed—more on this later). ;");
-  });
-// Remove movie from user's favorites array
+  (req, res) => {
+    res.send("Successfully remove a favorite movie");
+  }
+);
 
-
-
+// Remove user from user's list
+app.delete(
+  "/users/:Username",
+  // passport.authenticate('jwt', { session: false }),
+  (req, res) => {
+    res.send(
+      "Successful delete request Allow existing users to deregister (showing only a text that a user email has been removed—more on this later). ;"
+    );
+  }
+);
 
 // require("./auth")(router);
 // app.use("/");
 
 app.listen(8080, () => {
-  console.log('Your app is listening on port 8080');
+  console.log("Your app is listening on port 8080");
 });
 
 // In case of server issue
