@@ -1,3 +1,10 @@
+const mongoose = require('mongoose');
+const Models = require('./models.js');
+
+const Movies = Models.Movie;
+const Users = Models.User;
+mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
+
 const express = require("express"),
   bodyParser = require("body-parser"),
   uuid = require("uuid"),
@@ -43,95 +50,144 @@ app.get("/", (req, res) => {
 });
 
 // get all movies
-app.get("/movies/", (req, res) => {
-  res.send(
-    "Successful GET Return data (description, genre, director etc... for all movies"
-  );
+app.get('/movies', async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 // get one movie by Title
-app.get("/movies/:Title", (req, res) => {
-  res.send("Successful GET Return one Movie per Title");
-});
+app.get('/Movies/:Title', async (req, res) => {
+  await Movies.findOne({ Title: req.params.Title })
+    .then((movie) => {
+      res.json(movie);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+  });
 
 //  Post new user to register
-app.post("/users/", (req, res) => {
-  res.send("Successful Post Allow new user to register");
+app.post('/users', async (req, res) => {
+  await Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
 });
 
 // get Genre description
-app.get(
-  "/movies/genres/:genreName",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send(
-      "Successful GET request Return data about a genre (description) by name/title (e.g., “Thriller”);"
-    );
-  }
-);
+app.get('/movies/genres/:genreName', async (req, res) => {
+  await Movies.find()
+    .then((movies) => {
+      res.status(201).json(movies);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 
 // Get details about the director
-app.get(
-  "/movies/directors/:director",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send(
-      "Successful GET request Return data about a director (bio, birth year, death year) by name;;"
-    );
-  }
-);
-
+app.get('/movies/directors/:director', async (req, res) => {
+  await Movies.find()
+  .then((movies) => {
+    res.status(201).json(movies);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error: ' + err);
+  });
+});
 // Get all users
-app.get(
-  "/users/",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send("Successful GET request to list all users;");
-  }
-);
+app.get('/users', async (req, res) => {
+  await Users.find()
+    .then((users) => {
+      res.status(201).json(users);
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 
 //Update user information
-app.put(
-  "/users/:username",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send(
-      "Successful PUT request Allow users to update their user info (username,password etc..); ;"
-    );
-  }
-);
+app.put('/users/:Username', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
+    {
+      Username: req.body.Username,
+      Password: req.body.Password,
+      Email: req.body.Email,
+      Birthday: req.body.Birthday
+    }
+  },
+  { new: true }) // This line makes sure that the updated document is returned
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error:' + err);
+  })
+
+});
 
 // Allow users to add a movie their List of Favorites
-app.put(
-  "/users/:Username/movies/:MovieID",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send(
-      "  Allow users to add a movie to their list of favorites (showing only a text that a movie has been added—more on this later);;"
-    );
-  }
-);
+app.put('/users/:Username/movies/:MovieId', async (req, res) => {
+  await users.findOneAndUpdate({ Username: req.params.Username }, {
+    $push: { FavoriteMovies: req.params.MovieID }
+  },
+  { new: true }) // This line makes sure that the updated document is returned
+ .then((updatedUser) => {
+   res.json(updatedUser);
+ })
+ .catch((err) => {
+   console.error(err);
+   res.status(500).send('Error:'  + err);
+ });
+});
+
 
 // Allow users to remove a movie their List of Favorites
-app.delete(
-  "/users/:Username/movies/:MovieID",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send("Successfully remove a favorite movie");
-  }
-);
+app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndDelete({ Username: req.params.Username }, {
+     $push: { FavoriteMovies: req.params.MovieID }
+   },
+   { new: true }) // This line makes sure that the updated document is returned
+  .then((updatedUser) => {
+    res.json(updatedUser);
+  })
+  .catch((err) => {
+    console.error(err);
+    res.status(500).send('Error:' + err);
+  });
+});
 
 // Remove user from user's list
-app.delete(
-  "/users/:Username",
-  // passport.authenticate('jwt', { session: false }),
-  (req, res) => {
-    res.send(
-      "Successful delete request Allow existing users to deregister (showing only a text that a user email has been removed—more on this later). ;"
-    );
-  }
-);
 
+app.delete('/users/:Username', async (req, res) => {
+  await Users.findOneAndDelete({ Username: req.params.Username })
+    .then((user) => {
+      if (!user) {
+        res.status(400).send(req.params.Username + ' was not found');
+      } else {
+        res.status(200).send(req.params.Username + ' was deleted.');
+      }
+    })
+    .catch((err) => {
+      console.error(err);
+      res.status(500).send('Error: ' + err);
+    });
+});
 // require("./auth")(router);
 // app.use("/");
 
