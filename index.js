@@ -75,19 +75,34 @@ app.get('/Movies/:Title', async (req, res) => {
 
 //  Post new user to register
 app.post('/users', async (req, res) => {
-  await Users.find()
-    .then((users) => {
-      res.status(201).json(users);
+  await Users.findOne({ Username: req.body.Username })
+    .then((user) => {
+      if (user) {
+        return res.status(400).send(req.body.Username + 'already exists');
+      } else {
+        Users
+          .create({
+            Username: req.body.Username,
+            Password: req.body.Password,
+            Email: req.body.Email,
+            Birthday: req.body.Birthday
+          })
+          .then((user) =>{res.status(201).json(user) })
+        .catch((error) => {
+          console.error(error);
+          res.status(500).send('Error: ' + error);
+        })
+      }
     })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
+    .catch((error) => {
+      console.error(error);
+      res.status(500).send('Error: ' + error);
     });
 });
 
 // get Genre description
-app.get('/movies/genres/:genreName', async (req, res) => {
-  await Movies.find()
+app.get('/movies/genres/:Genre', async (req, res) => {
+  await Movies.find({ "Genre.Name": req.params.Genre })
     .then((movies) => {
       res.status(201).json(movies);
     })
@@ -98,8 +113,8 @@ app.get('/movies/genres/:genreName', async (req, res) => {
 });
 
 // Get details about the director
-app.get('/movies/directors/:director', async (req, res) => {
-  await Movies.find()
+app.get('/movies/directors/:Director', async (req, res) => {
+  await Movies.find({ "Director.Name": req.params.Director })
   .then((movies) => {
     res.status(201).json(movies);
   })
@@ -142,8 +157,8 @@ app.put('/users/:Username', async (req, res) => {
 });
 
 // Allow users to add a movie their List of Favorites
-app.put('/users/:Username/movies/:MovieId', async (req, res) => {
-  await users.findOneAndUpdate({ Username: req.params.Username }, {
+app.put('/users/:Username/movies/:MovieID', async (req, res) => {
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
     $push: { FavoriteMovies: req.params.MovieID }
   },
   { new: true }) // This line makes sure that the updated document is returned
