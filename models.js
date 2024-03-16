@@ -43,7 +43,7 @@ let Movie =mongoose.model('Movie', movieSchema);
 let User = mongoose.model('User', userSchema);
 let Director = mongoose.model('Directors', directorSchema);
 
-mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 module.exports.Movie = Movie;
 module.exports.User = User;

@@ -163,6 +163,7 @@ app.put('/users/:Username/movies/:MovieID', async (req, res) => {
   },
   { new: true }) // This line makes sure that the updated document is returned
  .then((updatedUser) => {
+  console.log(updatedUser)
    res.json(updatedUser);
  })
  .catch((err) => {
@@ -174,8 +175,8 @@ app.put('/users/:Username/movies/:MovieID', async (req, res) => {
 
 // Allow users to remove a movie their List of Favorites
 app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
-  await Users.findOneAndDelete({ Username: req.params.Username }, {
-     $push: { FavoriteMovies: req.params.MovieID }
+  await Users.findOneAndUpdate({ Username: req.params.Username }, {
+     $pull: { FavoriteMovies: req.params.MovieID }
    },
    { new: true }) // This line makes sure that the updated document is returned
   .then((updatedUser) => {
