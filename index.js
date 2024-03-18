@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const Models = require('./models.js');
+const passport = require('passport');
+require('./passport.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -12,12 +14,11 @@ const express = require("express"),
 
 const app = express();
 
+app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-  })
-);
+
+let auth = require('./auth.js')(app); 
+
 
 app.use(bodyParser.json());
 app.use(methodOverride());
@@ -50,19 +51,19 @@ app.get("/", (req, res) => {
 });
 
 // get all movies
-app.get('/movies', async (req, res) => {
+app.get('/movies', passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.find()
-    .then((movies) => {
-      res.status(201).json(movies);
-    })
-    .catch((err) => {
-      console.error(err);
-      res.status(500).send('Error: ' + err);
-    });
-});
+  .then((movies) => {
+  res.status(201).json(movies);
+  })
+  .catch((err) => {
+  console.error(err);
+  res.status(500).send('Error: ' + err);
+  });
+  });
 
 // get one movie by Title
-app.get('/Movies/:Title', async (req, res) => {
+app.get('/Movies/:Title',  passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.findOne({ Title: req.params.Title })
     .then((movie) => {
       res.json(movie);
@@ -101,7 +102,7 @@ app.post('/users', async (req, res) => {
 });
 
 // get Genre description
-app.get('/movies/genres/:Genre', async (req, res) => {
+app.get('/movies/genres/:Genre', passport.authenticate('jwt', { session: false }),  async (req, res) => {
   await Movies.find({ "Genre.Name": req.params.Genre })
     .then((movies) => {
       res.status(201).json(movies);
@@ -113,7 +114,7 @@ app.get('/movies/genres/:Genre', async (req, res) => {
 });
 
 // Get details about the director
-app.get('/movies/directors/:Director', async (req, res) => {
+app.get('/movies/directors/:Director',passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Movies.find({ "Director.Name": req.params.Director })
   .then((movies) => {
     res.status(201).json(movies);
@@ -124,7 +125,7 @@ app.get('/movies/directors/:Director', async (req, res) => {
   });
 });
 // Get all users
-app.get('/users', async (req, res) => {
+app.get('/users',passport.authenticate('jwt', { session: false }) , async (req, res) => {
   await Users.find()
     .then((users) => {
       res.status(201).json(users);
@@ -136,7 +137,7 @@ app.get('/users', async (req, res) => {
 });
 
 //Update user information
-app.put('/users/:Username', async (req, res) => {
+app.put('/users/:Username',passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Users.findOneAndUpdate({ Username: req.params.Username }, { $set:
     {
       Username: req.body.Username,
@@ -157,7 +158,7 @@ app.put('/users/:Username', async (req, res) => {
 });
 
 // Allow users to add a movie their List of Favorites
-app.put('/users/:Username/movies/:MovieID', async (req, res) => {
+app.put('/users/:Username/movies/:MovieID',passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Users.findOneAndUpdate({ Username: req.params.Username }, {
     $push: { FavoriteMovies: req.params.MovieID }
   },
@@ -174,7 +175,7 @@ app.put('/users/:Username/movies/:MovieID', async (req, res) => {
 
 
 // Allow users to remove a movie their List of Favorites
-app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
+app.delete('/users/:Username/movies/:MovieID',passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Users.findOneAndUpdate({ Username: req.params.Username }, {
      $pull: { FavoriteMovies: req.params.MovieID }
    },
@@ -190,7 +191,7 @@ app.delete('/users/:Username/movies/:MovieID', async (req, res) => {
 
 // Remove user from user's list
 
-app.delete('/users/:Username', async (req, res) => {
+app.delete('/users/:Username',passport.authenticate('jwt', { session: false }), async (req, res) => {
   await Users.findOneAndDelete({ Username: req.params.Username })
     .then((user) => {
       if (!user) {
