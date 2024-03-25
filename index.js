@@ -5,7 +5,10 @@ require('./passport.js');
 
 const Movies = Models.Movie;
 const Users = Models.User;
-mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
+// mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
+
+mongoose.connect('mongodb+srv://jatakay1998:tNpfd8JJVLvPTQu3@cluster0.xrbeyjg.mongodb.net/movieapi', { useNewUrlParser: true, useUnifiedTopology: true });
+
 
 const express = require("express"),
   bodyParser = require("body-parser"),
@@ -13,10 +16,14 @@ const express = require("express"),
   methodOverride = require("method-override");
 
 const app = express();
+const { check, validationResult } = require('express-validator');
 
 app.use(bodyParser.urlencoded({ extended: true }))
 app.use(bodyParser.json());
+const cors = require('cors');
+app.use(cors());
 
+/* rest of code goes here*/
 let auth = require('./auth.js')(app); 
 
 
@@ -75,7 +82,25 @@ app.get('/Movies/:Title',  passport.authenticate('jwt', { session: false }), asy
   });
 
 //  Post new user to register
-app.post('/users', async (req, res) => {
+app.post('/users',// Validation logic here for request
+//you can either use a chain of methods like .not().isEmpty()
+//which means "opposite of isEmpty" in plain english "is not empty"
+//or use .isLength({min: 5}) which means
+//minimum value of 5 characters are only allowed
+[
+  check('Username', 'Username is required').isLength({min: 5}),
+  check('Username', 'Username contains non alphanumeric characters - not allowed.').isAlphanumeric(),
+  check('Password', 'Password is required').not().isEmpty(),
+  check('Email', 'Email does not appear to be valid').isEmail()
+], async (req, res) => {
+
+  // check the validation object for errors
+  let errors = validationResult(req);
+
+  if (!errors.isEmpty()) {
+    return res.status(422).json({ errors: errors.array() });
+  }
+  let hashedPassword = Users.hashPassword(req.body.Password);
   await Users.findOne({ Username: req.body.Username })
     .then((user) => {
       if (user) {
@@ -84,7 +109,7 @@ app.post('/users', async (req, res) => {
         Users
           .create({
             Username: req.body.Username,
-            Password: req.body.Password,
+            Password: hashedPassword,
             Email: req.body.Email,
             Birthday: req.body.Birthday
           })

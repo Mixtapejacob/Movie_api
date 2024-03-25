@@ -48,4 +48,5 @@ let Director = mongoose.model('Directors', directorSchema);
 module.exports.Movie = Movie;
 module.exports.User = User;
 module.exports.Director = Director;
+const bcrypt = require('bcrypt');
 
