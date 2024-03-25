@@ -2,6 +2,7 @@ const mongoose = require('mongoose');
 const Models = require('./models.js');
 const passport = require('passport');
 require('./passport.js');
+const PORT = process.env.PORT || 3030;
 
 const Movies = Models.Movie;
 const Users = Models.User;
@@ -233,7 +234,7 @@ app.delete('/users/:Username',passport.authenticate('jwt', { session: false }), 
 // require("./auth")(router);
 // app.use("/");
 
-app.listen(8080, () => {
+app.listen(PORT, () => {
   console.log("Your app is listening on port 8080");
 });
 
