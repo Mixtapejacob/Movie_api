@@ -8,7 +8,7 @@ const Movies = Models.Movie;
 const Users = Models.User;
 // mongoose.connect('mongodb://localhost:27017/test', { useNewUrlParser: true, useUnifiedTopology: true });
 
-mongoose.connect('mongodb+srv://jatakay1998:tNpfd8JJVLvPTQu3@cluster0.xrbeyjg.mongodb.net/movieapi', { useNewUrlParser: true, useUnifiedTopology: true });
+mongoose.connect('mongodb+srv://jatakay1998:edpMGAcPBs6P7@cluster0.xrbeyjg.mongodb.net/movieapi', { useNewUrlParser: true, useUnifiedTopology: true });
 
 
 const express = require("express"),
@@ -33,20 +33,6 @@ app.use(methodOverride());
 
 app.use(express.static("public"));
 
-let topBooks = [
-  {
-    title: "Harry Potter and the Sorcerer's Stone",
-    author: "J.K. Rowling",
-  },
-  {
-    title: "Lord of the Rings",
-    author: "J.R.R. Tolkien",
-  },
-  {
-    title: "Twilight",
-    author: "Stephanie Meyer",
-  },
-];
 
 // serves the docuemntation html page
 app.get("/documentation", (req, res) => {
