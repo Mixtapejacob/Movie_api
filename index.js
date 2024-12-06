@@ -183,7 +183,12 @@ app.get(
 			});
 	}
 );
-// Get all users
+/**
+ * @route GET /users
+ * @description Get a list of all users
+ * @returns {Array<Object>} 200 - An array of user objects
+ * @returns {Error} 500 - Internal server error
+ */
 app.get(
 	'/users',
 	passport.authenticate('jwt', { session: false }),
