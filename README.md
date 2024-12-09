@@ -6,7 +6,7 @@
     </head>
     <body>
         <h1>Documentation Page</h1>
-        <p>This API will allow users to view movies and add to their favorites". Build a web application with backend component and will give details about
+        <p>This API will allow users to view movies and add to their favorites. Build a web application with backend component and will give details about
             their Favorite Movies and actors
            </p>
            <br />
