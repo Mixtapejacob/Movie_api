@@ -2,7 +2,7 @@
 <html lang ="en" dir="ltr">
     <head>
         <meta charset="utf-8">
-
+        <title>DOCUMENTATION</title>
     </head>
     <body>
         <h1>Documentation Page</h1>
